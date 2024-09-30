@@ -1,6 +1,7 @@
 // memanggil modul bawaan dari node.js  yaitu http
 // untuk membuat server htttp
 const http  = require('http')
+const filestream  = require('fs')
 
 http.createServer( function(request, response) {
     console.log(request.url)
@@ -8,29 +9,14 @@ http.createServer( function(request, response) {
 
     // Halaman utama
     if(request.url == '/'){
-        response.end(
-            `<h1>Selamat datang di website Hardi.com</h1><hr>
-            <br>
-             <a href='/profil'>Menuju ke profil</a>`
-        )
+        filestream.createReadStream('./view/beranda.html').pipe(response)
     }
     // halaman profil
     else if (request.url == '/profil') {
         let tahun_lahir = 1990
         let tahun_ini = 2024
         let umur = tahun_ini- tahun_lahir
-        response.end(
-            `<ul>
-                <li>Nama Lengkap: Haruto Kirigaya</li>
-                <li>Nama Panggilan: Haruto</li>
-                <li>Alamat: Tokyo, Jepang</li>
-                <li>Pekerjaan: Senior Programmer dan Game Developer</li>
-                <li>Tanggal Lahir: 17 Agustus ${tahun_lahir}</li>
-                <li>Umur: ${umur} tahun</li>
-            </ul>
-            <br>
-            <a href='/'>Balik ke beranda</a>`
-        )
+        filestream.createReadStream('./view/profil.html').pipe(response)
     }
     // hunbungi-saya
     else if (request.url == '/hubungi') {
