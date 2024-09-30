@@ -8,7 +8,11 @@ http.createServer( function(request, response) {
 
     // Halaman utama
     if(request.url == '/'){
-        response.end(`<h1>Selamat datang di website Hardi.com</h1><hr>`)
+        response.end(
+            `<h1>Selamat datang di website Hardi.com</h1><hr>
+            <br>
+             <a href='/profil'>Menuju ke profil</a>`
+        )
     }
     // halaman profil
     else if (request.url == '/profil') {
@@ -23,7 +27,9 @@ http.createServer( function(request, response) {
                 <li>Pekerjaan: Senior Programmer dan Game Developer</li>
                 <li>Tanggal Lahir: 17 Agustus ${tahun_lahir}</li>
                 <li>Umur: ${umur} tahun</li>
-            </ul>`
+            </ul>
+            <br>
+            <a href='/'>Balik ke beranda</a>`
         )
     }
     // hunbungi-saya
