@@ -12,21 +12,34 @@ http.createServer( function(request, response) {
     }
     // halaman profil
     else if (request.url == '/profil') {
+        let tahun_lahir = 1990
+        let tahun_ini = 2024
+        let umur = tahun_ini- tahun_lahir
         response.end(
             `<ul>
                 <li>Nama Lengkap: Haruto Kirigaya</li>
                 <li>Nama Panggilan: Haruto</li>
                 <li>Alamat: Tokyo, Jepang</li>
                 <li>Pekerjaan: Senior Programmer dan Game Developer</li>
+                <li>Tanggal Lahir: 17 Agustus ${tahun_lahir}</li>
+                <li>Umur: ${umur} tahun</li>
             </ul>`
         )
     }
+    // hunbungi-saya
     else if (request.url == '/hubungi') {
+        let kontak = {
+            WA: '0948478334',
+            email: 'Haruto@gmail.com',
+            linkedin: 'linkedin.com/haruto',
+            ig: '@ruutooo_'
+        }
         response.end(
             `<ul>
-                <li>Whatsapp: 0948478334</li>
-                <li>Email: Haruto@gmail.com</li>
-                <li>Instagram: ruutooo_</li>
+                <li>Whatsapp: ${kontak.WA}</li>
+                <li>Email: ${kontak.email}</li>
+                <li>Instagram: ${kontak.linkedin}</li>
+                <li>Linkedin: ${kontak.ig}</li>
             </ul>`
         )
     }
