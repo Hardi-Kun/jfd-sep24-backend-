@@ -4,6 +4,7 @@
 
 let nama_depan = 'Eren'
 let nama_belakang = 'Yeager'
+
 module.exports = {
     nama_lengkap: nama_depan + ' ' + nama_belakang,
     alamat: 'Benteng Maria, Paradise'
