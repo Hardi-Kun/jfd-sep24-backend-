@@ -51,6 +51,7 @@ http.createServer( async function(request, response) {
     else if (request.url == '/karyawan') {
         // tarik data dari db
         let data = await getAll_karyawan()
+        
         let html_list_karyawan = ''
         for (const i in data) {
             html_list_karyawan +=
