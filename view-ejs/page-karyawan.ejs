@@ -1,20 +1,49 @@
+<style>
+    .p5 {
+        padding: 5px;
+    }
+</style>
+
+
+
 <h1>List Karyawan</h1><hr>
 
+<% if (typeof notifikasi !== 'undefined') { %>
+    <span style="color: green;"><b><%= notifikasi %></b></span>
+    <br><br>
+    <% } %>
+
+<a href="/karyawan/tambah">
+    <button>tambah karyawan</button>
+</a><br>
+<br>
 <table border = 1>
     <thead>
         <tr>
             <th>NIP</th>
             <th>Nama</th>
             <th>Jabatan</th>
+            <th colspan="2">Aksi</th>
         </tr>
     </thead>
 
     <tbody>
         <% for (const i  in karyawan) { %>
         <tr>
-            <td><%= karyawan[i].NIP %></td>
-            <td><%= karyawan[i].Nama %></td>
-            <td><%= karyawan[i].nama_dept %></td>
+            <td class="p5"><%= karyawan[i].NIP %></td>
+            <td class="p5"><%= karyawan[i].Nama %></td>
+            <td class="p5"><%= karyawan[i].nama_dept %></td>
+            <td class="p5">
+                <a href="/karyawan/detail/<%= karyawan[i].id %>">
+                    <button>detail</button>
+                </a>
+            </td>
+            <td class="p5">
+                <a href="/karyawan/hapus/<%= karyawan[i].id %>"  
+                    onclick="return confirm('Yakin ingin hapus permanen <%= karyawan[i].nama %> ?')" >
+                    <button>hapus</button>
+                </a>
+            </td>
         </tr>
         <% } %>
     </tbody>
