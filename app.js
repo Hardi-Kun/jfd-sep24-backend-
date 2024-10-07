@@ -14,14 +14,7 @@ const db = mysql.createConnection({
 })
 
 // menyambungkan atau membuka koneksi
-db.connect( (error) => {
-    if (error) {
-        throw error
-    } else {
-        console.log('berhasil tersambung ke mysql')
-    }
-})
-
+db.connect()
 
 function getAll_karyawan() {
     return new Promise( (resolve, reject) => {
@@ -107,39 +100,14 @@ app.get('/karyawan/detail/:id_karyawan', async (req,res) => {
 })
 
 
-function getAll_departemen() {
-    return new Promise( (resolve, reject) => {
-        let sqlSyntax = 
-        `SELECT * FROM departemen`
-        db.query(sqlSyntax, function(errorSql, hasil) {
-            if (errorSql) {
-                reject(errorSql)
-            } else {
-                resolve(hasil)
-            }
-        })
-    })
-}
-
-function getAll_agama() {
-    return new Promise( (resolve, reject) => {
-        let sqlSyntax =
-        `SELECT * FROM agama`
-        db.query(sqlSyntax, function(errorSql, hasil) {
-            if (errorSql) {
-                reject(errorSql)
-            } else {
-                resolve(hasil)
-            }
-        })
-    })
-}
+const model_agama = require ('./model/m_agama')
+const model_dept = require ('./model/m_dept')
 
 
 app.get('/karyawan/tambah', async (req,res) => {
     let data = {
-        departemen: await getAll_departemen(),
-        agama: await getAll_agama(),
+        departemen: await model_dept.getAll_departemen(),
+        agama: await model_agama.getAll_agama(),
     }
     res.render('page-karyawan-form-tambah', data)
 })
@@ -246,8 +214,8 @@ app.get('/karyawan/hapus/:id', async (req,res)  => {
 app.get('/karyawan/edit/:id', async (req,res) => {
     let data = {
         satuKaryawan: await getOne_karyawan(req.params.id),
-        departemen: await getAll_departemen(),
-        agama: await getAll_agama(),
+        departemen: await model_dept.getAll_departemen(),
+        agama: await model_agama.getAll_agama(),
         moment: moment,
     }
     res.render('page-karyawan-edit', data)
