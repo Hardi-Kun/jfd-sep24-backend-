@@ -1,0 +1,60 @@
+<h1>Form Edit Karyawan</h1><hr>
+
+
+<% if (typeof pesanError !== 'undefined') { %>
+    <span style="color: red;">
+        <%= pesanError[0].path +': '+ pesanError[0].msg +' '+ pesanError[0].value %>
+    </span>
+    <br><br>
+<% } %>
+
+<pre>
+    <%= JSON.stringify(satuKaryawan, null, 4) %>
+</pre>
+
+<form action="/karyawan/proses-update-data/<%= satuKaryawan[0].id %>" method="post">
+    <label>Nama Lengkap</label>
+    <input type="text" id="nama_lengkap" name="form_nama_lengkap" value="<%= satuKaryawan[0].Nama %>" checked required>
+    <br><br>
+
+    <label>Gender</label>
+    <br>
+    <input type="radio" id="gender_l" name="form_gender" value="L" <%= (satuKaryawan[0].Gender == "L") ? 'checked' : '' %> required>
+    <label>Laki</label>
+    <br>
+    <input type="radio" id="gender_p" name="form_gender" value="P" <%= (satuKaryawan[0].Gender == "P") ? 'checked' : '' %> required>
+    <label>Perempuan</label>
+    <br><br>
+
+    <label>Alamat</label>
+    <textarea name="form_alamat" id="alamat"><%= satuKaryawan[0].Alamat%></textarea>
+    <br><br>
+
+    <label>Nomor Induk Pegawai</label>
+    <input type="text" id="NIP" name="form_NIP" value="<%= satuKaryawan[0].NIP %>" required>
+    <br><br>
+
+    <label>Jabatan</label>
+    <select name="form_jabatan" id="departemen">
+        <option value="">--- pilih ---</option>
+        <% for (const i in departemen ) { %>
+            <option value="<%= departemen[i].id %>" <%= (satuKaryawan[0].departemenn_id == departemen[i].id) ? 'selected' : '' %>>
+                <%= departemen[i].nama %>
+            </option>
+        <% } %>
+    </select>
+    <br><br>
+    
+    <label for="">Agama</label><br>
+    <select name="form_agama">
+        <option value="">-- pilih --</option>
+        <% for (const i in agama) { %>
+            <option value="<%= agama[i].id %>" <%= (satuKaryawan[0].agama_id == agama[i].id) ? 'selected' : '' %>>
+                <%= agama[i].nama %>
+            </option>
+        <% } %>
+    </select>
+    <br><br>
+
+    <button type="submit">Submit</button>
+</form>

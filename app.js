@@ -2,6 +2,7 @@ const express   = require ('express')
 const app       = express()
 const mysql     = require ('mysql2')
 const port      = 8000
+const moment    = require ('moment')
 const {body, query, validationResult} = require('express-validator')
 
 // sambungkan ke mysql
@@ -241,6 +242,51 @@ app.get('/karyawan/hapus/:id', async (req,res)  => {
         throw error
     }
 })
+
+app.get('/karyawan/edit/:id', async (req,res) => {
+    let data = {
+        satuKaryawan: await getOne_karyawan(req.params.id),
+        departemen: await getAll_departemen(),
+        agama: await getAll_agama(),
+        moment: moment,
+    }
+    res.render('page-karyawan-edit', data)
+})
+
+app.post('/karyawan/proses-update-data/:id', async (req,res) => {
+    try {
+        let update = await update_karyawan(req)
+        if (update.affectedRows > 0 ) {
+            res.redirect('/karyawan?notif=Berhasil perbarui data karyawan')
+        }
+    } catch (error) {
+        
+    }
+})
+
+function update_karyawan(req) {
+    return new Promise( (resolve, reject) => {
+        let sqlSyntax = 
+        `UPDATE karyawan SET ? WHERE id = ?`
+
+        let sqlData = {
+            Nama            : req.body.form_nama_lengkap,
+            Gender          : req.body.form_gender,
+            Alamat          : req.body.form_alamat,
+            NIP             : req.body.form_NIP,
+            departemenn_id  : req.body.form_jabatan,
+            agama_id        : req.body.form_agama
+        }
+
+        db.query(sqlSyntax,[sqlData, req.params.id], function(errorSql, hasil) {
+            if (errorSql) {
+                reject(errorSql)
+            } else {
+                resolve(hasil)
+            }
+        })
+    })
+}
 
 app.listen(port, () => {
     console.log('Server  nyala, buka http://localhost:' + port)
