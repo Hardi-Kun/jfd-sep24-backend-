@@ -16,50 +16,9 @@ const db = mysql.createConnection({
 // menyambungkan atau membuka koneksi
 db.connect()
 
-function getAll_karyawan() {
-    return new Promise( (resolve, reject) => {
-        let sqlSyntax = 
-        `SELECT
-            karyawan.*, 
-            departemen.kode, departemen.nama AS nama_dept, 
-            agama.nama AS nama_agama
-        FROM karyawan
-        LEFT JOIN departemen ON departemen.id = karyawan.departemenn_id
-        LEFT JOIN agama ON agama.id = karyawan.agama_id
-        ORDER BY karyawan.nama`
-        db.query(sqlSyntax, function(errorSql, hasil) {
-            if (errorSql) {
-                reject(errorSql)
-            } else {
-                resolve(hasil)
-            }
-        })
-    })
-}
-
-
-function getOne_karyawan( id ) {
-    return new Promise( (resolve, reject) => {
-        let sqlSyntax = 
-        `SELECT
-            karyawan.*, 
-            departemen.kode, departemen.nama AS nama_dept, 
-            agama.nama AS nama_agama
-        FROM karyawan
-        LEFT JOIN departemen ON departemen.id = karyawan.departemenn_id
-        LEFT JOIN agama ON agama.id = karyawan.agama_id
-        WHERE karyawan.id = ?
-        ORDER BY karyawan.nama`
-        db.query(sqlSyntax, [id], function(errorSql, hasil) {
-            if (errorSql) {
-                reject(errorSql)
-            } else {
-                resolve(hasil)
-            }
-        })
-    })
-}
-
+const model_agama       = require ('./model/m_agama')
+const model_dept        = require ('./model/m_dept')
+const model_karyawan    = require ('./model/m_karyawan')
 
 app.use( express.urlencoded({extended:false}))
 app.set('view engine', 'ejs') // setting penggunaan template engine untuk express
@@ -84,7 +43,7 @@ app.get ('/pendidikan', (req,res) => {
 
 app.get('/karyawan', async (req,res) => {
     let data = {
-        karyawan: await  getAll_karyawan(),
+        karyawan: await  model_karyawan.getAll_karyawan(),
         notifikasi:  req.query.notif
     }
     res.render('page-karyawan', data)
@@ -94,14 +53,13 @@ app.get('/karyawan/detail/:id_karyawan', async (req,res) => {
 
     // ambil data karyawan 1 aja
     let data = {
-        satuKaryawan: await getOne_karyawan(req.params.id_karyawan)
+        satuKaryawan: await model_karyawan.getOne_karyawan(req.params.id_karyawan)
     }
     res.render('page-karyawan-detail', data)
 })
 
 
-const model_agama = require ('./model/m_agama')
-const model_dept = require ('./model/m_dept')
+
 
 
 app.get('/karyawan/tambah', async (req,res) => {
@@ -157,52 +115,11 @@ app.post('/karyawan/proses-insert-data', formValidasiInsert,  async (req,res) =>
 
 })
 
-function insert_karyawan( req ) {
-    return new Promise( (resolve, reject) => {
-        let sqlSyntax = 
-        `INSERT INTO karyawan
-        (Nama, Gender, Alamat, NIP, departemenn_id, agama_id)
-        VALUES
-        (?, ?, ?, ?, ?, ?)`
-
-        let sqlData = [
-            req.body.form_nama_lengkap,
-            req.body.form_gender,
-            req.body.form_alamat,
-            req.body.form_NIP,
-            req.body.form_jabatan,
-            req.body.form_agama
-        ]
-
-        db.query(sqlSyntax,sqlData, function(errorSql, hasil) {
-            if (errorSql) {
-                reject(errorSql)
-            } else {
-                resolve(hasil)
-            }
-        })
-    })
-}
-
-function hapusKaryawan( id ) {
-    return new Promise( (resolve, reject) => {
-        let sqlSyntax = 
-        `DELETE FROM karyawan WHERE id = ?`
-
-        db.query(sqlSyntax, [id], function(errorSql, hasil) {
-            if (errorSql) {
-                reject(errorSql)
-            } else {
-                resolve(hasil)
-            }
-        })
-    })
-}
 
 
 app.get('/karyawan/hapus/:id', async (req,res)  => {
     try {
-        let hapus = await hapusKaryawan( req.params.id )
+        let hapus = await model_karyawan.hapusKaryawan( req.params.id )
         if (hapus.affectedRows > 0) {
             res.redirect('/karyawan')
         }
@@ -213,7 +130,7 @@ app.get('/karyawan/hapus/:id', async (req,res)  => {
 
 app.get('/karyawan/edit/:id', async (req,res) => {
     let data = {
-        satuKaryawan: await getOne_karyawan(req.params.id),
+        satuKaryawan: await model_karyawan.getOne_karyawan(req.params.id),
         departemen: await model_dept.getAll_departemen(),
         agama: await model_agama.getAll_agama(),
         moment: moment,
@@ -223,7 +140,7 @@ app.get('/karyawan/edit/:id', async (req,res) => {
 
 app.post('/karyawan/proses-update-data/:id', async (req,res) => {
     try {
-        let update = await update_karyawan(req)
+        let update = await model_karyawan.update_karyawan(req)
         if (update.affectedRows > 0 ) {
             res.redirect('/karyawan?notif=Berhasil perbarui data karyawan')
         }
@@ -232,29 +149,7 @@ app.post('/karyawan/proses-update-data/:id', async (req,res) => {
     }
 })
 
-function update_karyawan(req) {
-    return new Promise( (resolve, reject) => {
-        let sqlSyntax = 
-        `UPDATE karyawan SET ? WHERE id = ?`
 
-        let sqlData = {
-            Nama            : req.body.form_nama_lengkap,
-            Gender          : req.body.form_gender,
-            Alamat          : req.body.form_alamat,
-            NIP             : req.body.form_NIP,
-            departemenn_id  : req.body.form_jabatan,
-            agama_id        : req.body.form_agama
-        }
-
-        db.query(sqlSyntax,[sqlData, req.params.id], function(errorSql, hasil) {
-            if (errorSql) {
-                reject(errorSql)
-            } else {
-                resolve(hasil)
-            }
-        })
-    })
-}
 
 app.listen(port, () => {
     console.log('Server  nyala, buka http://localhost:' + port)
